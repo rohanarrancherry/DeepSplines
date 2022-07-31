@@ -178,7 +178,11 @@ class Manager(Project):
             # scheduler parameters are the same for the main and aux optimizers
             aux_scheduler = self.construct_scheduler(aux_optimizer)
 
-            return (main_optimizer, main_scheduler,
+        # ensured that the function is returning a main_optimizer and main_scheduler
+        # aux_optimizer and aux_scheduler being None doesn't cause an issue in the
+        # flow of the program
+
+        return (main_optimizer, main_scheduler,
                     aux_optimizer, aux_scheduler)
 
     @staticmethod
