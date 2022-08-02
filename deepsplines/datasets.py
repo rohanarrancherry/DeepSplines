@@ -20,6 +20,7 @@ def init_dataset(**params):
 
     # add your datasets here and create a corresponding Dataset class
     dataset_dict = {
+        'torus': Torus,
         's_shape': S_shape,
         'circle': Circle,
         'cifar10': Cifar10,
@@ -719,3 +720,58 @@ class S_shape(twoD):
                 np.full_like(t_right, self.y_cutoff),
                 c=color,
                 linewidth=3)
+
+
+class Torus(twoD):
+    """ Class for a Torus circle dataset """
+
+    def __init__(self, **params):
+        """ """
+        super().__init__(**params)
+        # circle_area = rect_area/2
+        self.radius_sq = self.rect_side ** 2 / (2 * math.pi)
+        self.second_radius_sq = self.rect_side ** 2 / (8 * math.pi)
+
+    def get_labels(self, inputs):
+        """
+        Generate dataset labels for a set of inputs.
+
+        Args:
+            inputs (torch.Tensor).
+        Returns:
+            labels (torch.Tensor).
+        """
+        inputs_radius_sq = (inputs ** 2).sum(1)
+        labels = ((inputs_radius_sq < self.radius_sq) & (inputs_radius_sq > self.second_radius_sq)).to(torch.float32)
+
+        return labels
+
+    def add_gtruth_contour(self, ax, mode):
+        """
+        Add contour of torus to plot.
+
+        Args:
+            ax (matplotlib.axes):
+                plot axes.
+            mode (str):
+                'train' or 'test' (determines color).
+        """
+        assert mode in ['train', 'test']
+
+        color = 'black' if mode == 'train' else 'chocolate'
+        circle = plt.Circle((0, 0),
+                            radius=math.sqrt(self.radius_sq),
+                            color=color,
+                            linewidth=3,
+                            fill=False)
+
+        second_circle = plt.Circle((0, 0),
+                                   radius=math.sqrt(self.second_radius_sq),
+                                   color=color,
+                                   linewidth=3,
+                                   fill=False)
+
+        ax.add_artist(second_circle)
+        ax.add_artist(circle)
+
+
