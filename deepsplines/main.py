@@ -395,7 +395,7 @@ def verify_params(params):
 
     # verify network and dataset_name consistency
     if params['net'] == 'twoDnet' and \
-            params['dataset_name'] not in ['s_shape', 'circle']:
+            params['dataset_name'] not in ['s_shape', 'circle', 'torus']:
         raise ValueError(f'{params["net"]} can only be used with "s_shape" '
                          'or "circle datasets."')
 
